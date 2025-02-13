@@ -1,0 +1,46 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Full-page black background with our chosen font */
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    font-family: 'Bebas Neue', sans-serif;
+    overflow: hidden;
+  }
+  
+  /* Container uses Flexbox to split the viewport in two halves */
+  #container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Each wrapper takes 50% of the viewport */
+  .wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Styling for the text elements */
+  .name {
+    font-size: 10vw;
+    color: #fff;
+    white-space: nowrap;
+    /* Center the text within its container */
+    text-align: center;
+  }
+  
+  /* Ensure the individual spans are inline-block for precise control */
+  #right-name span {
+    display: inline-block;
+  }
+  
