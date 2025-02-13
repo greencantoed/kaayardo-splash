@@ -5,7 +5,6 @@
     box-sizing: border-box;
   }
   
-  /* Full-page black background with our chosen font */
   html, body {
     width: 100%;
     height: 100%;
@@ -14,32 +13,25 @@
     overflow: hidden;
   }
   
-  /* Container uses Flexbox to split the viewport in two halves */
   #container {
-    display: flex;
+    position: relative;
     width: 100%;
     height: 100%;
   }
   
-  /* Each wrapper takes 50% of the viewport */
-  .wrapper {
-    position: relative;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  /* Styling for the text elements */
+  /* Both text elements are centered */
   .name {
-    font-size: 10vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     color: #fff;
+    font-size: 10vw;
     white-space: nowrap;
-    /* Center the text within its container */
-    text-align: center;
+    /* Center relative to its own dimensions */
+    transform: translate(-50%, -50%);
   }
   
-  /* Ensure the individual spans are inline-block for precise control */
+  /* Ensure each span in the right text is inline-block for precise control */
   #right-name span {
     display: inline-block;
   }

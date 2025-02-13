@@ -1,81 +1,57 @@
-// Wait for the window to load all assets
-window.onload = function() {
+// Wait for the DOM to load completely
+document.addEventListener("DOMContentLoaded", function() {
     // Register GSAP's Physics2DPlugin
     gsap.registerPlugin(Physics2DPlugin);
   
-    // Grab the wrapper elements and the collision sound element
-    const leftWrapper = document.getElementById("left-wrapper");
-    const rightWrapper = document.getElementById("right-wrapper");
-    const collisionSound = document.getElementById("collision-sound");
+    // Grab the text elements
+    const leftName = document.getElementById("left-name");
+    const rightName = document.getElementById("right-name");
   
-    // Get the viewport width to calculate off-screen positions
-    const viewportWidth = window.innerWidth;
+    // Define an offset to position texts off-screen.
+    // Here we use 75% of the viewport width.
+    const offset = window.innerWidth * 0.75;
   
-    /* 
-      Initial positioning:
-      - The left wrapper starts completely off-screen to the left.
-      - The right wrapper starts completely off-screen to the right.
-      (Since each wrapper occupies 50% of the width,
-       moving them by half the viewport width will hide them.)
-    */
-    gsap.set(leftWrapper, { x: -viewportWidth / 2 });
-    gsap.set(rightWrapper, { x: viewportWidth / 2 });
+    // Set the initial positions:
+    // leftName is shifted left; rightName is shifted right.
+    gsap.set(leftName, { x: -offset });
+    gsap.set(rightName, { x: offset });
   
-    // Create a GSAP timeline to sequence the entrance and collision animations
-    const tl = gsap.timeline();
+    // Create a timeline to sequence the animation.
+    const tl = gsap.timeline({
+      onComplete: collisionEffect  // Trigger the collision effect once they meet
+    });
   
-    // Animate the left half from off-screen to its natural position (x: 0)
-    tl.to(leftWrapper, {
-      duration: 1.5,
-      x: 0,
-      ease: "power2.out"
-    }, 0);
+    // Animate both texts into the center (x: 0 returns them to their original centered position)
+    tl.to(leftName, { duration: 0.8, x: 0, ease: "power2.inOut" }, 0);
+    tl.to(rightName, { duration: 0.8, x: 0, ease: "power2.inOut" }, 0);
   
-    // Animate the right half from off-screen to its natural position (x: 0)
-    tl.to(rightWrapper, {
-      duration: 1.5,
-      x: 0,
-      ease: "power2.out",
-      onComplete: collisionEffect  // Trigger collision effect when they meet
-    }, 0);
+    // Optional: add a subtle scale pulse at the moment of collision
+    tl.to([leftName, rightName], { duration: 0.3, scale: 1.05, yoyo: true, repeat: 1, ease: "power2.inOut" }, "+=0.1");
   
-    // Optional: add a subtle scale pulse at the moment of impact
-    tl.to([leftWrapper, rightWrapper], {
-      duration: 0.5,
-      scale: 1.05,
-      yoyo: true,
-      repeat: 1,
-      ease: "power2.inOut"
-    }, "+=0.2");
-  
-    // Function to handle the collision effect
+    // Collision effect: bounce "EDO" upward and shift/fade the overlapping "A"
     function collisionEffect() {
-      // Play the twinkle sound effect (adjust volume as needed)
-      collisionSound.volume = 0.5;
-      collisionSound.play();
-  
-      // Bounce away the "EDO" part with a physics-based animation
+      // Bounce the "EDO" part upward with a physics-based animation
       gsap.to(".bounce-out", {
-        duration: 1.5,
+        duration: 0.8,
         physics2D: {
-          velocity: 600,  // pixels per second
-          angle: -90,     // Launch straight upward
-          gravity: 800    // Gravity for a natural arc
+          velocity: 500,   // Starting speed in pixels per second
+          angle: -90,      // Launch straight upward
+          gravity: 1000    // Gravity for a natural arc
         },
-        opacity: 0,       // Fade out while bouncing
+        opacity: 0,
         ease: "power2.in"
       });
   
-      // Animate the overlapping "A" so that it shifts to merge with "KAAYA"
+      // Animate the overlapping "A" to shift left and then fade out,
+      // so that the final result reads "KAAYARDO".
       gsap.to(".overlap", {
         duration: 0.3,
-        x: -20,  // Shift left (adjust as needed for a perfect merge)
+        x: -20,  // Adjust this value to achieve the perfect merge with "KAAYA"
         ease: "power2.out",
         onComplete: function() {
-          // Fade out the duplicate "A" after shifting
           gsap.to(".overlap", { duration: 0.2, opacity: 0 });
         }
       });
     }
-  };
+  });
   
