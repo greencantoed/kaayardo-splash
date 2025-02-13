@@ -1,38 +1,46 @@
-// Wait for the DOM to load fully
 document.addEventListener("DOMContentLoaded", function() {
-    // Register the GSAP Physics2DPlugin
+    // Debugging log
+    console.log("Script loaded. DOMContentLoaded fired.");
+  
+    // Register GSAP's Physics2DPlugin
     gsap.registerPlugin(Physics2DPlugin);
   
-    // Grab the text elements
-    const leftName = document.getElementById("left-name");
+    // Grab references to our elements
+    const leftName  = document.getElementById("left-name");
     const rightName = document.getElementById("right-name");
   
-    // Calculate an offset so that texts start off-screen.
-    // Here we use 120% of the viewport width.
+    // We'll push each name off-screen by 120% of viewport width
+    // so they're fully hidden initially.
     const offset = window.innerWidth * 1.2;
   
-    // Set initial positions:
-    // Left text starts shifted left by "offset"
-    // Right text starts shifted right by "offset"
-    gsap.set(leftName, { x: -offset });
-    gsap.set(rightName, { x: offset });
+    // ============== STEP 1: Immediate Setup ==============
+    // Immediately place them off-screen & make them visible (but off-canvas).
+    gsap.set(leftName, {
+      x: -offset,
+      visibility: "visible"
+    });
+    gsap.set(rightName, {
+      x: offset,
+      visibility: "visible"
+    });
   
-    // Create a timeline for a fully structured animation sequence
+    // ============== STEP 2: Create Main Timeline ==============
     const tl = gsap.timeline();
   
-    // 1. Sprint both texts into the center (x: 0 returns them to their original, centered positions)
+    // 2a) Sprint both texts from off-screen to center
     tl.to(leftName, {
       duration: 0.8,
-      x: 0,
+      x: 0,            // "0" means back to its default transform (center screen)
       ease: "power2.out"
     }, 0);
+  
     tl.to(rightName, {
       duration: 0.8,
       x: 0,
       ease: "power2.out"
     }, 0);
   
-    // 2. At the moment of collision, add a subtle scale pulse for extra impact
+    // 2b) Subtle scale pulse at the collision moment
     tl.to([leftName, rightName], {
       duration: 0.3,
       scale: 1.05,
@@ -41,33 +49,60 @@ document.addEventListener("DOMContentLoaded", function() {
       ease: "power2.inOut"
     }, "+=0.1");
   
-    // 3. Trigger the collision effect after a brief delay
-    tl.add(collisionEffect, "+=0.1");
+    // 2c) Trigger the collision effect in the timeline
+    tl.add(() => {
+      console.log("Collision effect triggered.");
+      collisionEffect();
+    }, "+=0.1");
   
-    // Define the collision effect function
+    // 2d) After collision, highlight final “KAAYARDO” (optional)
+    // We wait a bit so "EDO" has time to bounce away and "A" to fade
+    tl.add(() => {
+      console.log("Final highlight triggered.");
+      finalHighlight();
+    }, "+=0.5");
+  
+    // ============== STEP 3: Collision Effect ==============
     function collisionEffect() {
-      // Bounce the "EDO" part upward using a physics-based animation
+      // A) Bounce “EDO” upward with physics
       gsap.to(".bounce-out", {
         duration: 0.8,
         physics2D: {
-          velocity: 600,    // Starting velocity (pixels per second)
-          angle: -90,       // Launch straight upward
-          gravity: 1200     // Gravity for a natural arc
+          velocity: 600,   // The initial speed (px/sec)
+          angle: -90,      // Straight up
+          gravity: 1200    // Gravity pulling it back down
         },
-        opacity: 0,         // Fade out during the bounce
+        opacity: 0,        // Fade as it flies
         ease: "power2.in"
       });
   
-      // Animate the overlapping "A" to shift left and fade out,
-      // so that the duplicate "A" merges with "KAAYA" seamlessly.
+      // B) Shift the overlapping “A” left, then fade it
       gsap.to(".overlap", {
         duration: 0.4,
-        x: -30,           // Adjust this value to perfectly merge the letter
+        x: -30,            // Adjust for best visual merge with “KAAYA”
         ease: "power2.out",
         onComplete: function() {
           gsap.to(".overlap", { duration: 0.2, opacity: 0 });
         }
       });
+    }
+  
+    // ============== STEP 4: Final Highlight ==============
+    // This step draws subtle attention to the newly formed "KAAYARDO"
+    function finalHighlight() {
+      // For a subtle effect, let's do a quick scale-up and fade to a lighter color
+      gsap.fromTo(
+        [leftName, rightName], 
+        { scale: 1, color: "#fff" },
+        {
+          duration: 0.5,
+          scale: 1.1,
+          color: "#f2f2f2",
+          yoyo: true,
+          repeat: 1,
+          ease: "power2.inOut"
+        }
+      );
     }
   });
   
