@@ -1,43 +1,39 @@
-/* 1) Basic Reset */
+/* Basic Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  /* 2) Full-Screen Black Background */
-  html, body {
-    width: 100%;
-    height: 100%;
-    background: #000;
-    font-family: 'Bebas Neue', sans-serif;
-    overflow: hidden;
-  }
-  
-  /* 3) Container for the text elements */
-  #container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* 4) Shared styling for the text elements */
-  .name {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    font-size: 10vw;         /* Adjust as desired for scale */
-    color: #fff;
-    white-space: nowrap;
-    transform: translate(-50%, -50%);
-  
-    /* Keep them hidden initially to prevent a flicker overlap
-       before GSAP positions them off-screen. */
-    visibility: hidden;
-  }
-  
-  /* 5) Ensure separate spans for EDO, A, RDO can animate individually */
-  #right-name span {
-    display: inline-block;
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #000; /* Black background */
+  font-family: 'Bebas Neue', sans-serif;
+  overflow: hidden;
+}
+
+/* Container for our text elements */
+#container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Shared styling for the text elements */
+.name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 10vw;      /* Big, responsive text */
+  color: #fff;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  /* Hide them initially to prevent flicker before GSAP positions them */
+  visibility: hidden;
+}
+
+/* Allow each span in the right text to be animated separately */
+#right-name span {
+  display: inline-block;
+}

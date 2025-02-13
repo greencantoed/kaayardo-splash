@@ -4,56 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KAAYARDO Animation</title>
-  <!-- Load Bebas Neue font from Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
-    rel="stylesheet"
-  />
-  <style>
-    /* ====== Basic Reset & Layout ====== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      background: #000; /* black background */
-      overflow: hidden; /* hide scrollbars */
-      font-family: 'Bebas Neue', sans-serif;
-    }
-
-    /* Container for our text elements */
-    #container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Shared styling for text elements */
-    .name {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      color: #fff;
-      font-size: 10vw;     /* big letters */
-      white-space: nowrap; /* keep them on one line */
-      transform: translate(-50%, -50%);
-      visibility: hidden;  /* hide until GSAP positions them off-screen */
-    }
-
-    /* Let the separate text chunks be inline-block */
-    #right-name span {
-      display: inline-block;
-    }
-  </style>
+  <!-- Load Bebas Neue from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <!-- Our custom styles -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="container">
     <!-- Left text: "KAAYA" -->
     <div id="left-name" class="name">KAAYA</div>
-
     <!-- Right text: "EDOARDO" split into three parts -->
     <div id="right-name" class="name">
       <span class="bounce-out">EDO</span>
@@ -62,123 +21,10 @@
     </div>
   </div>
 
-  <!-- GSAP (core) + Physics2DPlugin from CDN -->
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
-    integrity="sha512-7pLy5qD5L4Zdh9u/uvPo8wFZ1J4qFiT0nxRu4DrNe37cmk6QOHXRO/itxUpcbq9orZEat4zmxQaQQl8p+8iKxg=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Physics2DPlugin.min.js"
-    integrity="sha512-mowbS1QJ+pNt9cTmGpJ6JELaV5w1TbmKzF9iZRJ3N4UIUrZ85SVmUpyofMHONmTUl7qQnsuxt0SNjmfTqLKaew=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      console.log("Script loaded. DOMContentLoaded fired.");
-
-      // Register GSAP's Physics2DPlugin
-      gsap.registerPlugin(Physics2DPlugin);
-
-      // Grab references to our text elements
-      const leftName  = document.getElementById("left-name");
-      const rightName = document.getElementById("right-name");
-
-      // We'll push each name 120% of viewport width off-screen
-      const offset = window.innerWidth * 1.2;
-
-      // 1) Immediately set them off-screen & visible (so there's no overlap flicker)
-      gsap.set(leftName, {
-        x: -offset,
-        visibility: "visible"
-      });
-      gsap.set(rightName, {
-        x: offset,
-        visibility: "visible"
-      });
-
-      // 2) Create a GSAP timeline for the entire sequence
-      const tl = gsap.timeline();
-
-      // a) Sprint them in from off-screen to center
-      tl.to(leftName, {
-        duration: 0.8,
-        x: 0,           // back to center
-        ease: "power2.out"
-      }, 0);
-
-      tl.to(rightName, {
-        duration: 0.8,
-        x: 0,
-        ease: "power2.out"
-      }, 0);
-
-      // b) A quick scale pulse at collision
-      tl.to([leftName, rightName], {
-        duration: 0.3,
-        scale: 1.05,
-        yoyo: true,
-        repeat: 1,
-        ease: "power2.inOut"
-      }, "+=0.1");
-
-      // c) Trigger collision effect
-      tl.add(() => {
-        console.log("Collision effect triggered.");
-        collisionEffect();
-      }, "+=0.1");
-
-      // d) Optionally, highlight final "KAAYARDO"
-      tl.add(() => {
-        console.log("Final highlight triggered.");
-        finalHighlight();
-      }, "+=0.5");
-
-      // 3) The collision effect: bounce "EDO" + fade overlapping "A"
-      function collisionEffect() {
-        // A) Bounce "EDO" upward
-        gsap.to(".bounce-out", {
-          duration: 0.8,
-          physics2D: {
-            velocity: 600,  // initial speed
-            angle: -90,     // straight up
-            gravity: 1200   // how fast it falls
-          },
-          opacity: 0,
-          ease: "power2.in"
-        });
-
-        // B) Shift the overlapping "A" left & fade it out
-        gsap.to(".overlap", {
-          duration: 0.4,
-          x: -30,           // shift left to merge with "KAAYA"
-          ease: "power2.out",
-          onComplete: function() {
-            gsap.to(".overlap", { duration: 0.2, opacity: 0 });
-          }
-        });
-      }
-
-      // 4) A final highlight on the newly formed "KAAYARDO"
-      function finalHighlight() {
-        // Subtle color/scale change, then revert
-        gsap.fromTo(
-          [leftName, rightName],
-          { scale: 1, color: "#fff" },
-          {
-            duration: 0.5,
-            scale: 1.1,
-            color: "#f2f2f2",
-            yoyo: true,
-            repeat: 1,
-            ease: "power2.inOut"
-          }
-        );
-      }
-    });
-  </script>
+  <!-- Include GSAP and the Physics2DPlugin without SRI/crossorigin attributes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Physics2DPlugin.min.js"></script>
+  <!-- Main animation script -->
+  <script src="script.js"></script>
 </body>
 </html>
