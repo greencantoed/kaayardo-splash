@@ -1,39 +1,40 @@
-/* Basic Reset */
-* {
+/* Local font inclusion for Bebas Neue (using your TTF file) */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('fonts/BebasNeue-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Basic reset and full-screen centering */
+html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  height: 100%;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;    /* Black background for contrast */
+  overflow: hidden;          /* Hide overflow (letters flying out won't cause scroll) */
+  color: #fff;               /* Default text color */
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  background: #000; /* Black background */
+/* Splash name container styling */
+#nameContainer {
+  position: relative;              /* For absolutely positioned children */
   font-family: 'Bebas Neue', sans-serif;
-  overflow: hidden;
+  font-size: 6rem;                 /* Large font size for splash effect */
+  letter-spacing: 2px;             /* Slight spacing for clarity */
+  text-transform: uppercase;       /* Ensure text is uppercase */
+  visibility: hidden;              /* Hide until positions are set (avoids flicker) */
+  /* Width and height will be fixed by script.js after measuring content */
 }
 
-/* Container for our text elements */
-#container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-/* Shared styling for the text elements */
-.name {
+/* Each part of the name (span) will be positioned absolutely by the script */
+#nameContainer span {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  font-size: 10vw;      /* Big, responsive text */
-  color: #fff;
-  white-space: nowrap;
-  transform: translate(-50%, -50%);
-  /* Hide them initially to prevent flicker before GSAP positions them */
-  visibility: hidden;
-}
-
-/* Allow each span in the right text to be animated separately */
-#right-name span {
-  display: inline-block;
+  top: 0;
+  left: 0;
 }
