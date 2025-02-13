@@ -19,7 +19,7 @@
     height: 100%;
   }
   
-  /* Both text elements are centered */
+  /* Both text elements are absolutely centered */
   .name {
     position: absolute;
     top: 50%;
@@ -31,7 +31,7 @@
     transform: translate(-50%, -50%);
   }
   
-  /* Ensure each span in the right text is inline-block for precise control */
+  /* Each part of the right text must be inline-block */
   #right-name span {
     display: inline-block;
   }
