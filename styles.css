@@ -1,40 +1,62 @@
-/* Local font inclusion for Bebas Neue (using your TTF file) */
+/* Load Bebas Neue locally */
 @font-face {
   font-family: 'Bebas Neue';
-  src: url('fonts/BebasNeue-Regular.ttf') format('truetype');
+  src: url('fonts/BebasNeue-Regular.woff2') format('woff2'),
+       url('fonts/BebasNeue-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
-/* Basic reset and full-screen centering */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
 body {
+  margin: 0;
+  background: #000;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000;    /* Black background for contrast */
-  overflow: hidden;          /* Hide overflow (letters flying out won't cause scroll) */
-  color: #fff;               /* Default text color */
+  height: 100vh;
 }
 
-/* Splash name container styling */
-#nameContainer {
-  position: relative;              /* For absolutely positioned children */
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 6rem;                 /* Large font size for splash effect */
-  letter-spacing: 2px;             /* Slight spacing for clarity */
-  text-transform: uppercase;       /* Ensure text is uppercase */
-  visibility: hidden;              /* Hide until positions are set (avoids flicker) */
-  /* Width and height will be fixed by script.js after measuring content */
-}
-
-/* Each part of the name (span) will be positioned absolutely by the script */
-#nameContainer span {
+/* Name containers */
+.name {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 6rem;
+  color: #fff;
+  white-space: nowrap;
+  visibility: hidden; /* Hidden until animation starts */
+}
+
+/* Initially position left name offscreen left, right name offscreen right */
+#name-left {
+  left: -100%;
+}
+
+#name-right {
+  right: -100%; /* Changed from left:100% to right:-100% for more predictable positioning */
+}
+
+/* Each letter as inline-block */
+.letter {
+  display: inline-block;
+  position: relative;
+  padding: 0 5px; /* Added consistent padding between letters */
+}
+
+/* Neon glow effect for final assembled letters */
+.glow {
+  color: #FFFFE0;
+  text-shadow: 0 0 8px #FFFF80, 0 0 12px #B22222, 0 0 18px #B22222;
+  animation: pulseGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  from {
+      text-shadow: 0 0 8px #FFFF80, 0 0 12px #B22222, 0 0 18px #B22222;
+  }
+  to {
+      text-shadow: 0 0 12px #FFFFBF, 0 0 16px #B22222, 0 0 24px #B22222;
+  }
 }
