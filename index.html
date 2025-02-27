@@ -1,189 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kaayardo Collision Animation</title>
-  <style>
-    /* Basic Reset */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #111;
-      color: #fff;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
-    /* Fullscreen container centered vertically/horizontally */
-    #animation-container {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    /* Container for the names */
-    #names {
-      position: relative;
-      width: 800px;
-      height: 200px;
-    }
-    /* Each name is positioned absolutely */
-    #name-kaaya, #name-edoardo {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      white-space: nowrap;
-    }
-    /* Start offscreen: kaaya from left, edoardo from right */
-    #name-kaaya { left: -100%; }
-    #name-edoardo { right: -100%; }
-    /* Each letter styling */
-    .letter {
-      display: inline-block;
-      font-size: 80px;
-      font-weight: bold;
-      line-height: 1;
-      margin: 0 2px;
-      position: relative;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAAYARDO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* Load Bebas Neue locally */
+        @font-face {
+            font-family: 'Bebas Neue';
+            src: url('fonts/BebasNeue-Regular.woff2') format('woff2'),
+                 url('fonts/BebasNeue-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        /* Fallback to Google Fonts if local files not available */
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+        
+        body {
+            margin: 0;
+            background: #000;
+            overflow-x: hidden;
+            font-family: 'Bebas Neue', sans-serif;
+            color: #fff;
+        }
+        
+        /* Header styling */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+            transition: text-shadow 0.3s ease;
+        }
+        
+        .logo:hover {
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(178, 34, 34, 0.8);
+        }
+        
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: #B22222;
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: #FFFFE0;
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Animation container */
+        #animation-container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        /* Combined name container */
+        #full-name {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            visibility: hidden; /* Hidden until animation starts */
+        }
+        
+        /* Letter styling */
+        .letter {
+            display: inline-block;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 6rem;
+            color: #fff;
+            margin: 0 20px; /* Equal spacing for all letters */
+            opacity: 1;
+        }
+        
+        /* Neon glow effect for final assembled letters */
+        .glow {
+            color: #FFFFE0;
+            text-shadow: 0 0 8px #FFFF80, 0 0 12px #B22222, 0 0 18px #B22222;
+            animation: pulseGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulseGlow {
+            from {
+                text-shadow: 0 0 8px #FFFF80, 0 0 12px #B22222, 0 0 18px #B22222;
+            }
+            to {
+                text-shadow: 0 0 12px #FFFFBF, 0 0 16px #B22222, 0 0 24px #B22222;
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .letter {
+                font-size: 4rem;
+                margin: 0 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .letter {
+                font-size: 3rem;
+                margin: 0 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="animation-container">
-    <div id="names">
-      <!-- Name "KAAYA": The last letter (A) will bounce away -->
-      <div id="name-kaaya">
-        <span class="letter kaaya">K</span>
-        <span class="letter kaaya">A</span>
-        <span class="letter kaaya">A</span>
-        <span class="letter kaaya">Y</span>
-        <span class="letter kaaya bounce">A</span>
-      </div>
-      <!-- Name "EDOARDO": The first three letters (E, D, O) will bounce away -->
-      <div id="name-edoardo">
-        <span class="letter edoardo bounce">E</span>
-        <span class="letter edoardo bounce">D</span>
-        <span class="letter edoardo bounce">O</span>
-        <span class="letter edoardo">A</span>
-        <span class="letter edoardo">R</span>
-        <span class="letter edoardo">D</span>
-        <span class="letter edoardo">O</span>
-      </div>
+    <!-- Header with navigation (initially hidden) -->
+    <header id="main-header" style="opacity: 0; visibility: hidden;">
+        <div class="nav-container">
+            <a href="index.html" class="logo">KAAYARDO</a>
+            <nav>
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="projects.html">Our Projects</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="https://lakaaysha.com" target="_blank">Lakaaysha</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Animation container -->
+    <div id="animation-container">
+        <div id="full-name">
+            <!-- All letters in a single container for easier control -->
+            <span class="letter" id="letter-K">K</span>
+            <span class="letter" id="letter-A1">A</span>
+            <span class="letter" id="letter-A2">A</span>
+            <span class="letter" id="letter-Y">Y</span>
+            <span class="letter" id="letter-A3">A</span>
+            <span class="letter" id="letter-R">R</span>
+            <span class="letter" id="letter-D">D</span>
+            <span class="letter" id="letter-O">O</span>
+        </div>
     </div>
-  </div>
 
-  <!-- Include GSAP and Matter.js from CDN -->
-  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
-  
-  <script>
-    window.addEventListener('load', function(){
-      // Create a GSAP timeline for the overall animation sequence
-      const tl = gsap.timeline();
+    <script>
+        window.addEventListener('load', function() {
+            // Ensure GSAP is loaded
+            if (typeof gsap === 'undefined') {
+                console.error("GSAP failed to load.");
+                return;
+            }
 
-      // Step 1: Slide the two names into the center
-      tl.to("#name-kaaya", { duration: 1.5, x: 600, ease: "power2.out" }, 0);
-      tl.to("#name-edoardo", { duration: 1.5, x: -600, ease: "power2.out" }, 0);
-
-      // Step 2: When they collide, trigger the physics-based bounce for specific letters.
-      tl.add(() => {
-        startPhysicsBounce();
-      }, "+=0.2");
-
-      // Step 3: After the physics simulation, merge the remaining letters into "KAAYARDO"
-      tl.add(() => {
-        mergeFinalWord();
-      }, "+=2"); // Adjust the delay as needed
-
-      // --- Function: Physics Bounce using Matter.js ---
-      function startPhysicsBounce() {
-        // Select the letters that should bounce (the bounce group)
-        const bounceElems = document.querySelectorAll('.bounce');
-        
-        // Create a Matter.js engine with a small gravity
-        const engine = Matter.Engine.create();
-        engine.gravity.y = 1;
-        const world = engine.world;
-        
-        // Store mapping of each DOM element to its Matter.js body
-        const bodies = [];
-        
-        bounceElems.forEach(el => {
-          const rect = el.getBoundingClientRect();
-          // Calculate center position for the element
-          const x = rect.left + rect.width / 2;
-          const y = rect.top + rect.height / 2;
-          // Create a rectangular body for this element
-          const body = Matter.Bodies.rectangle(x, y, rect.width, rect.height, {
-            restitution: 0.8,
-            frictionAir: 0.02
-          });
-          // Prevent rotation so the text stays upright
-          Matter.Body.setInertia(body, Infinity);
-          Matter.World.add(world, body);
-          bodies.push({ el, body });
+            // Make sure font is loaded before starting animation
+            document.fonts.ready.then(function() {
+                // Get all letters
+                const fullName = document.getElementById('full-name');
+                const letters = document.querySelectorAll('.letter');
+                
+                // Store original positions for each letter
+                const originalPositions = {};
+                
+                // Center point of the container
+                const centerX = window.innerWidth / 2;
+                
+                // Make container visible
+                fullName.style.visibility = "visible";
+                
+                // Initial positioning - half off left, half off right
+                gsap.set(fullName, { left: '50%', xPercent: -50, position: 'absolute' });
+                
+                // Set initial state - randomly spread letters off screen
+                letters.forEach((letter, index) => {
+                    // Store the letter's original position
+                    originalPositions[letter.id] = index;
+                    
+                    // Initial setup
+                    if (index < 5) { // K, A, A, Y, A - left group
+                        gsap.set(letter, { 
+                            x: -window.innerWidth - Math.random() * 200,
+                            opacity: 1
+                        });
+                    } else { // R, D, O - right group
+                        gsap.set(letter, {
+                            x: window.innerWidth + Math.random() * 200,
+                            opacity: 1
+                        });
+                    }
+                });
+                
+                // Master timeline
+                const masterTl = gsap.timeline({
+                    defaults: { ease: "power2.inOut" }
+                });
+                
+                // Phase 1: Fly in all letters with staggered timing
+                masterTl.to(letters, {
+                    duration: 2,
+                    x: 0,
+                    stagger: 0.1,
+                    ease: "back.out(1.7)"
+                });
+                
+                // Skip Phase 2 and 3 (no falling A, no gap closing needed)
+                // Move directly to the glow effect
+                
+                // Phase 2: Add glow effect to all letters
+                const allLetters = [
+                    "#letter-K", 
+                    "#letter-A1", 
+                    "#letter-A2", 
+                    "#letter-Y", 
+                    "#letter-A3",
+                    "#letter-R", 
+                    "#letter-D", 
+                    "#letter-O"
+                ];
+                
+                allLetters.forEach((letterID, index) => {
+                    masterTl.add(() => {
+                        document.querySelector(letterID).classList.add('glow');
+                    }, "+=0.1");
+                });
+                
+                // Phase 3: Fade in the header after the name animation completes
+                masterTl.add(() => {
+                    // Get the header element
+                    const header = document.getElementById('main-header');
+                    
+                    // Make it visible but still transparent
+                    header.style.visibility = 'visible';
+                    
+                    // Create fade-in animation
+                    gsap.to(header, {
+                        duration: 1.5,
+                        opacity: 1,
+                        ease: "power2.inOut"
+                    });
+                }, "+=1");
+                
+                // Play the master timeline
+                masterTl.play();
+            });
         });
-        
-        // Apply an impulse to each bounce letter to simulate a collision reaction.
-        // Letters left of center move left; those right of center move right.
-        const centerX = window.innerWidth / 2;
-        bodies.forEach(({ body }) => {
-          const direction = (body.position.x < centerX) ? -1 : 1;
-          Matter.Body.applyForce(body, body.position, { x: 0.02 * direction, y: -0.03 });
-        });
-        
-        // Run a physics update loop for a short duration.
-        const simulationDuration = 1500; // in ms
-        const startTime = Date.now();
-        function updatePhysics() {
-          Matter.Engine.update(engine, 1000 / 60);
-          bodies.forEach(({ el, body }) => {
-            // Update the DOM element’s position via CSS transform.
-            el.style.transform = `translate(${body.position.x - el.offsetWidth/2}px, ${body.position.y - el.offsetHeight/2}px)`;
-          });
-          if (Date.now() - startTime < simulationDuration) {
-            requestAnimationFrame(updatePhysics);
-          } else {
-            // Fade out the bounce letters after simulation completes.
-            gsap.to(bounceElems, { duration: 0.5, opacity: 0, ease: "power2.out" });
-          }
-        }
-        updatePhysics();
-      }
-      
-      // --- Function: Merge Final Word ---
-      function mergeFinalWord() {
-        // Final word "KAAYARDO" should be formed from:
-        // From KAAYA: K, A, A, Y (all except the bouncing last A)
-        // From EDOARDO: A, R, D, O (the non-bouncing letters)
-        const finalLetters = [];
-        // Select non-bounce letters from each word container.
-        document.querySelectorAll("#name-kaaya .letter:not(.bounce)").forEach(el => finalLetters.push(el));
-        document.querySelectorAll("#name-edoardo .letter:not(.bounce)").forEach(el => finalLetters.push(el));
-        
-        // Compute a final horizontal layout – center the final word within the container.
-        const container = document.getElementById('animation-container');
-        const containerRect = container.getBoundingClientRect();
-        const spacing = 10; // spacing between letters
-        let totalWidth = 0;
-        finalLetters.forEach(el => { totalWidth += el.offsetWidth + spacing; });
-        totalWidth -= spacing; // remove trailing space
-        const startX = (containerRect.width - totalWidth) / 2;
-        const startY = (containerRect.height - 100) / 2; // assume roughly 100px tall text
-
-        // Animate each final letter into its new position.
-        let currentX = startX;
-        finalLetters.forEach(el => {
-          // Compute the delta from current position to the target position.
-          const rect = el.getBoundingClientRect();
-          const deltaX = currentX - rect.left;
-          const deltaY = startY - rect.top;
-          gsap.to(el, { duration: 1, x: deltaX, y: deltaY, ease: "power3.inOut" });
-          currentX += el.offsetWidth + spacing;
-        });
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
